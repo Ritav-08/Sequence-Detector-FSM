@@ -1,7 +1,7 @@
 module sdFSM1011(input  wire clk_i,
                  input  wire rst_i,
                  input  wire data_i, 
-                 output reg  doit_o
+                 output reg  dout_o
 );
 
 //net(s)
@@ -15,7 +15,7 @@ localparam S0 = 000,
            S4 = 100;
 
 //state(s)
-always@(rst_i, posedge clk_i) begin
+always@(posedge rst_i, posedge clk_i) begin
    //Reset
    if(rst_i) begin
       state  <= S0;
