@@ -1,3 +1,5 @@
+`timescale 1ns / 1ps
+
 module sdFSM1011(input  wire clk_i,
                  input  wire rst_i,
                  input  wire data_i, 
@@ -8,20 +10,20 @@ module sdFSM1011(input  wire clk_i,
 reg [2:0] state;
 
 //Parameter(s)
-localparam S0 = 000, 
-           S1 = 001, 
-           S2 = 010, 
-           S3 = 011, 
-           S4 = 100;
+localparam S0 = 3'b000, 
+           S1 = 3'b001, 
+           S2 = 3'b010, 
+           S3 = 3'b011, 
+           S4 = 3'b100;
 
 //state(s)
-always@(posedge rst_i, posedge clk_i) begin
+always@(posedge clk_i, posedge rst_i) begin
    //Reset
    if(rst_i) begin
       state  <= S0;
       dout_o <= 1'b0;
    end
-   //State Transitions
+   //Output + State Transitions
    else begin
       case (state)
          S0: begin
