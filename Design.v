@@ -1,60 +1,78 @@
-module sdFSM1011(input  wire clk_i,
-                 input  wire rst_i,
-                 input  wire data_i, 
-                 output reg  dout_o
+`timescale 1ns / 1ps
+//////////////////////////////////////////////////////////////////////////////////
+// Company: 
+// Engineer: 
+// 
+// Create Date: 31.05.2026 18:44:31
+// Design Name: 
+// Module Name: tb_sdFSM1011
+// Project Name: 
+// Target Devices: 
+// Tool Versions: 
+// Description: 
+// 
+// Dependencies: 
+// 
+// Revision:
+// Revision 0.01 - File Created
+// Additional Comments:
+// 
+//////////////////////////////////////////////////////////////////////////////////
+
+
+module tb_sdFSM1011 ();
+reg clk_ti;
+reg rst_ti;
+reg data_ti;
+wire dout_to;
+
+//instantiation
+sdFSM1011 DUT ( .rst_i(rst_ti), 
+.clk_i(clk_ti), 
+.data_i(data_ti), 
+.dout_o(dout_to)
 );
 
-//net(s)
-reg [2:0] state;
+//reg(s)
+reg [3:0] sequence = 4'b0;
 
-//Parameter(s)
-localparam S0 = 000, 
-           S1 = 001, 
-           S2 = 010, 
-           S3 = 011, 
-           S4 = 100;
+//clock
+initial begin
+clk_ti = 1'b0;
+forever #5 clk_ti = ~clk_ti;
+end
 
-//state(s)
-always@(posedge rst_i, posedge clk_i) begin
-   //Reset
-   if(rst_i) begin
-      state  <= S0;
-      dout_o <= 1'b0;
-   end
-   //State Transitions
-   else begin
-      case (state)
-         S0: begin
-                       dout_o <= 1'b0;
-            if(data_i) state  <= S1;
-            else       state  <= S0;
-         end
-         S1: begin
-                       dout_o <= 1'b0;
-            if(data_i) state  <= S1;
-            else       state  <= S2;
-         end
-         S2: begin
-                       dout_o <= 1'b0;
-            if(data_i) state  <= S3;
-            else       state  <= S0;
-         end
-         S3: begin
-                       dout_o <= 1'b0;
-            if(data_i) state  <= S4;
-            else       state  <= S2;
-         end
-         S4: begin
-                       dout_o <= 1'b1;
-            if(data_i) state  <= S1;
-            else       state  <= S2;
-         end
-         default: begin 
-            dout_o <= 1'b0;
-            state  <= S0;
-         end
-      endcase
-   end //else block
-end //always block
+//Feeding
+initial begin
+data_ti = 1'b0;
+rst_ti = 1'b1;
+#3 rst_ti = 1'b0;
+repeat(10) #10 data_ti = $urandom_range(0, 1);
+#10 data_ti = 1'b1;
+#10 data_ti = 1'b0;
+#10 data_ti = 1'b1;
+#10 data_ti = 1'b1;
+#10 data_ti = 1'b0;
+#10 data_ti = 1'b1;
+#10 data_ti = 1'b1;
+#10 data_ti = 1'b1;
+#10 data_ti = 1'b0;
+#10 data_ti = 1'b1;
+#10 data_ti = 1'b0;
+#5 $display ("Simulation End");
+$finish;
+end
+
+always@(posedge clk_ti) begin 
+sequence <= {sequence[2:0], data_ti};
+end
+
+//capture
+initial begin
+$monitor ("Time: %0t | Clk: %b, Rst: %b | Sequence: %0b | Detection: %0b", 
+           $time,      clk_ti,  rst_ti,   sequence,       dout_to);
+$dumpfile("MooreFSM.vcd");
+$dumpvars(0, tb_sdFSM1011);
+end
 
 endmodule
