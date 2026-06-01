@@ -21,42 +21,44 @@ always@(posedge clk_i, posedge rst_i) begin
    //Reset
    if(rst_i) begin
       state  <= S0;
-      dout_o <= 1'b0;
    end
-   //Output + State Transitions
+   //State Transitions (Sequential)
    else begin
       case (state)
          S0: begin
-                       dout_o <= 1'b0;
             if(data_i) state  <= S1;
             else       state  <= S0;
          end
          S1: begin
-                       dout_o <= 1'b0;
             if(data_i) state  <= S1;
             else       state  <= S2;
          end
          S2: begin
-                       dout_o <= 1'b0;
             if(data_i) state  <= S3;
             else       state  <= S0;
          end
          S3: begin
-                       dout_o <= 1'b0;
             if(data_i) state  <= S4;
             else       state  <= S2;
          end
          S4: begin
-                       dout_o <= 1'b1;
             if(data_i) state  <= S1;
             else       state  <= S2;
          end
          default: begin 
-            dout_o <= 1'b0;
             state  <= S0;
          end
       endcase
    end //else block
 end //always block
+
+//Output transitions
+  //assign dout_o = (state == S4);
+always@(*) begin
+   case(state)
+      S4:      dout_o = 1'b1;
+      default: dout_o = 1'b0;
+   endcase
+end
 
 endmodule
